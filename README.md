@@ -45,3 +45,151 @@ Provide a short description of the API you designed, with the required parameter
 * [A (small) sample request, with body (if any)]
 * [A (small) sample response, with body (if any)]
 * [Error responses, if any]
+
+# `server side`
+
+The `server` is the server-side app companion of [`biglab2`](https://github.com/polito-AW1-2022-exams/biglab2-socket-close.git). It presents some APIs to perform CRUD operations on a film library.
+
+## APIs
+Hereafter, we report the designed HTTP APIs, also implemented in the project.
+
+### __List Films using query parameters__
+
+URL: `/api/films?filter=<filtername>&id=<id>`
+
+Method: GET
+
+Description: You can use query parameters to filter the data returned in endpoint responses. By specifying the `<id>` (optional) all filters will be ignored and you will only get the film with the given ID. Filters are optional if an `<id>` is specified.
+
+
+| Filter Name | Response |
+| --- | --- |
+| _all_ | Get all the films in the library |
+| _favorite_ | Get all films marked as favorite |
+| _best_rated_ | Get all films with 5 stars rating |
+| _seen_last_month_ | Get all films seen in the last month |
+| _unseen_ | Get all unseen movies |
+
+
+Request body: _None_
+
+Response: `200 OK` (success), `500 Internal Server Error` (generic error) or `404 Not Found` (wrong ID or filter name).
+
+Response body: An array of objects, each describing a film.
+```
+[{
+    "id": 3,
+    "title": "Star Wars",
+    "favorite": 0,
+    "watchdate": null,
+    "rating": null,
+}, {
+    "id": 4,
+    "title": "Matrix",
+    "favorite": 0,
+    "watchdate": null,
+    "rating": null,
+}
+...
+]
+```
+
+### __Get a Film (By ID)__
+
+URL: `/api/films/<id>`
+
+Method: GET
+
+Description: Get the film identified by the id `<id>`.
+
+Request body: _None_
+
+Response: `200 OK` (success), `404 Not Found` (wrong code), or `500 Internal Server Error` (generic error).
+
+Response body: An object, describing a single course.
+```
+{
+    "code": "01TXYOV",
+    "name": "Web Applications I",
+    "CFU": 6
+}
+```
+
+### __List Exams__
+
+URL: `/api/exams`
+
+Method: GET
+
+Description: Get all the exams that the student already passed.
+
+Request body: _None_
+
+Response: `200 OK` (success) or `500 Internal Server Error` (generic error).
+
+Response body: An array of objects, each describing an exam.
+```
+[{
+    "code": "02LSEOV",
+    "score": 25,
+    "date": "2021-02-01"
+},
+...
+]
+```
+
+### __Add a New Exam__
+
+URL: `/api/exams`
+
+Method: POST
+
+Description: Add a new (passed) exam to the list of the student's exams.
+
+Request body: An object representing an exam (Content-Type: `application/json`).
+```
+{
+    "code": "01TXYOV",
+    "score": 30,
+    "date": "2021-05-04"
+}
+```
+
+Response: `201 Created` (success) or `503 Service Unavailable` (generic error, e.g., when trying to insert an already existent exam). If the request body is not valid, `422 Unprocessable Entity` (validation error).
+
+Response body: _None_
+
+### __Update an Exam__
+
+URL: `/api/exams/<code>`
+
+Method: PUT
+
+Description: Update entirely an existing (passed) exam, identified by its code.
+
+Request body: An object representing the entire exam (Content-Type: `application/json`).
+```
+{
+    "code": "01TXYOV",
+    "score": 31,
+    "date": "2021-05-04"
+}
+```
+
+Response: `200 OK` (success) or `503 Service Unavailable` (generic error). If the request body is not valid, `422 Unprocessable Entity` (validation error).
+
+Response body: _None_
+
+### __Delete an Exam__
+
+URL: `/api/exams/<code>`
+
+Method: DELETE
+
+Description: Delete an existing (passed) exam, identified by its code.
+
+Request body: _None_
+
+Response: `204 No Content` (success) or `503 Service Unavailable` (generic error).
+
+Response body: _None_
